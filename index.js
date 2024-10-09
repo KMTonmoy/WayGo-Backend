@@ -28,12 +28,13 @@ const client = new MongoClient(uri, {
 
 async function run() {
     try {
-        await client.connect();
+        // await client.connect();
         console.log("Connected to MongoDB");
 
         const bannerCollection = client.db('WayGO').collection('BannerCollection');
         const usersCollection = client.db('WayGO').collection('users');
         const blogCollection = client.db('WayGO').collection('blogCollection');
+        const busCollection = client.db('WayGO').collection('busCollection');
 
 
 
@@ -108,10 +109,232 @@ async function run() {
         });
 
         // Banners Endpoints
-        app.get('/banners', async (req, res) => {
-            const banners = await bannerCollection.find().toArray();
-            res.send(banners);
+        // app.get('/banners', async (req, res) => {
+        //     const banners = await bannerCollection.find().toArray();
+        //     res.send(banners);
+        // });
+
+
+        // app.post('/banners', async (req, res) => {
+        //     const banner = req.body;
+
+        //     if (!banner || !banner.url || !banner.heading || !banner.description) {
+        //         return res.status(400).send({ error: 'Invalid banner data' });
+        //     }
+
+        //     try {
+        //         const result = await bannerCollection.insertOne({
+        //             url: banner.url,
+        //             heading: banner.heading,
+        //             description: banner.description,
+        //             timestamp: Date.now()
+        //         });
+        //         res.status(201).send({ message: 'Banner uploaded successfully', result });
+        //     } catch (error) {
+        //         console.error('Error uploading banner:', error);
+        //         res.status(500).send({ error: 'Failed to upload banner' });
+        //     }
+        // });
+
+        // app.patch('/banners/:id', async (req, res) => {
+        //     const id = req.params.id;
+        //     const { image, title } = req.body;
+
+        //     if (!image && !title) {
+        //         return res.status(400).send({ error: 'No fields provided for update' });
+        //     }
+
+        //     const filter = { _id: new ObjectId(id) };
+        //     const updateDoc = {
+        //         $set: {
+        //             ...(image && { image }),
+        //             ...(title && { title }),
+        //         }
+        //     };
+
+        //     try {
+        //         const result = await bannerCollection.updateOne(filter, updateDoc);
+
+        //         if (result.matchedCount === 0) {
+        //             return res.status(404).send({ error: 'Banner not found' });
+        //         }
+
+        //         res.send({ message: 'Banner updated successfully', result });
+        //     } catch (error) {
+        //         console.error('Error updating banner:', error);
+        //         res.status(500).send({ error: 'Failed to update banner' });
+        //     }
+        // });
+
+        // app.delete('/banners/:id', async (req, res) => {
+        //     const id = req.params.id;
+
+        //     try {
+        //         const result = await bannerCollection.deleteOne({ _id: new ObjectId(id) });
+
+        //         if (result.deletedCount === 0) {
+        //             return res.status(404).send({ error: 'Banner not found' });
+        //         }
+
+        //         res.send({ message: 'Banner deleted successfully' });
+        //     } catch (error) {
+        //         console.error('Error deleting banner:', error);
+        //         res.status(500).send({ error: 'Failed to delete banner' });
+        //     }
+        // });
+
+        app.get('/allbus', async (req, res) => {
+            try {
+                const allbus = await busCollection.find().toArray();
+                res.send(allbus);
+            } catch (error) {
+                console.error('Error fetching allbus:', error);
+                res.status(500).send({ error: 'Failed to fetch allbus' });
+            }
         });
+        app.get('/banners', async (req, res) => {
+            try {
+                const banners = await bannerCollection.find().toArray();
+                res.send(banners);
+            } catch (error) {
+                console.error('Error fetching banners:', error);
+                res.status(500).send({ error: 'Failed to fetch banners' });
+            }
+        });
+
+        app.post('/banners', async (req, res) => {
+            const banner = req.body;
+
+            if (!banner || !banner.url || !banner.heading || !banner.description) {
+                return res.status(400).send({ error: 'Invalid banner data' });
+            }
+
+            try {
+                const result = await bannerCollection.insertOne({
+                    url: banner.url,
+                    heading: banner.heading,
+                    description: banner.description,
+                    timestamp: Date.now()
+                });
+                res.status(201).send({ message: 'Banner uploaded successfully', result });
+            } catch (error) {
+                console.error('Error uploading banner:', error);
+                res.status(500).send({ error: 'Failed to upload banner' });
+            }
+        });
+
+        app.patch('/banners/:id', async (req, res) => {
+            const id = req.params.id;
+            const { url, heading, description } = req.body;
+
+            if (!url && !heading && !description) {
+                return res.status(400).send({ error: 'No fields provided for update' });
+            }
+
+            const filter = { _id: new ObjectId(id) };
+            const updateDoc = {
+                $set: {
+                    ...(url && { url }),
+                    ...(heading && { heading }),
+                    ...(description && { description }),
+                }
+            };
+
+            try {
+                const result = await bannerCollection.updateOne(filter, updateDoc);
+
+                if (result.matchedCount === 0) {
+                    return res.status(404).send({ error: 'Banner not found' });
+                }
+
+                res.send({ message: 'Banner updated successfully', result });
+            } catch (error) {
+                console.error('Error updating banner:', error);
+                res.status(500).send({ error: 'Failed to update banner' });
+            }
+        });
+
+        app.put('/banners/:id', async (req, res) => {
+            const id = req.params.id;
+            const { url, heading, description } = req.body;
+
+            if (!url && !heading && !description) {
+                return res.status(400).send({ error: 'No fields provided for update' });
+            }
+
+            const filter = { _id: new ObjectId(id) };
+            const updateDoc = {
+                $set: {
+                    ...(url && { url }),
+                    ...(heading && { heading }),
+                    ...(description && { description }),
+                }
+            };
+
+            try {
+                const result = await bannerCollection.updateOne(filter, updateDoc);
+
+                if (result.matchedCount === 0) {
+                    return res.status(404).send({ error: 'Banner not found' });
+                }
+
+                res.send({ message: 'Banner updated successfully', result });
+            } catch (error) {
+                console.error('Error updating banner:', error);
+                res.status(500).send({ error: 'Failed to update banner' });
+            }
+        });
+
+
+
+        app.post('/addbus', async (req, res) => {
+            const bus = req.body;
+
+            try {
+                const result = await busCollection.insertOne(bus);
+                res.status(201).send({ message: 'Bus added successfully', busId: result.insertedId });
+            } catch (error) {
+                console.error('Error adding bus:', error);
+                res.status(500).send({ error: 'Failed to add bus' });
+            }
+        });
+
+
+
+
+        app.delete('/banners/:id', async (req, res) => {
+            const id = req.params.id;
+
+            try {
+                const result = await bannerCollection.deleteOne({ _id: new ObjectId(id) });
+
+                if (result.deletedCount === 0) {
+                    return res.status(404).send({ error: 'Banner not found' });
+                }
+
+                res.send({ message: 'Banner deleted successfully' });
+            } catch (error) {
+                console.error('Error deleting banner:', error);
+                res.status(500).send({ error: 'Failed to delete banner' });
+            }
+        });
+        app.delete('/allbus/:id', async (req, res) => {
+            const id = req.params.id;
+
+            try {
+                const result = await busCollection.deleteOne({ _id: new ObjectId(id) });
+
+                if (result.deletedCount === 0) {
+                    return res.status(404).send({ error: 'Bus not found' });
+                }
+
+                res.send({ message: 'Bus deleted successfully' });
+            } catch (error) {
+                console.error('Error deleting Bus:', error);
+                res.status(500).send({ error: 'Failed to delete Bus' });
+            }
+        });
+
 
 
 
@@ -122,17 +345,17 @@ async function run() {
 
         app.get('/blogs/:id', async (req, res) => {
             try {
-                const id = req.params.id;  // Get the `id` from the route parameter
-                const ObjectId = require('mongodb').ObjectId;  // MongoDB ObjectId helper
+                const id = req.params.id;
+                const ObjectId = require('mongodb').ObjectId;
 
-                // Find the blog by ID
+
                 const blog = await blogCollection.findOne({ _id: new ObjectId(id) });
 
                 if (!blog) {
                     return res.status(404).send({ message: 'Blog not found' });
                 }
 
-                res.send(blog);  // Send the blog data as the response
+                res.send(blog);
             } catch (error) {
                 console.error(error);
                 res.status(500).send({ message: 'Error retrieving blog' });
@@ -159,7 +382,7 @@ async function run() {
         });
 
     } finally {
-        // Ensure the client connection closes properly on exit
+
         process.on('SIGINT', async () => {
             // await client.close();
             // console.log("Disconnected from MongoDB!");
