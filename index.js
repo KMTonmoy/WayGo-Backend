@@ -3,11 +3,13 @@ const app = express();
 const cors = require("cors");
 require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const nodemailer = require("nodemailer");
+
 const port = process.env.PORT || 8000;
 
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000","https://waygobustravels.vercel.app"],
     credentials: true,
   })
 );
