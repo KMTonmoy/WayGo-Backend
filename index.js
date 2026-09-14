@@ -4,7 +4,9 @@ const cors = require("cors");
 require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const nodemailer = require("nodemailer");
+const dns = require("dns");
 
+dns.setServers(["1.1.1.1", "8.8.8.8"]);
 const port = process.env.PORT || 8000;
 
 app.use(
